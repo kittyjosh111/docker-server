@@ -25,6 +25,7 @@ services:
       - YOURLS_USER=admin
       # YOURLS_PASS= Located in .env
       - YOURLS_SITE=https://
+      - YOURLS_UNIQUE_URLS=false
     depends_on:
       - mysql
     volumes:
