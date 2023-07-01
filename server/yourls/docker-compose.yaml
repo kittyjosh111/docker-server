@@ -1,0 +1,42 @@
+version: '3.8'
+
+## Create a .env file with the following variables:
+#YOURLS_DB_PASS (Database Password)
+#MYSQL_ROOT_PASSWORD (Database Password, same as YOURLS_DB_PASS)
+#YOURLS_PASS (Admin Password)
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:
+
+  yourls:
+    env_file: .env
+    image: yourls
+    ports:
+      - 8080:80
+    environment:
+      - YOURLS_DB_HOST=mysql
+      - YOURLS_DB_USER=root
+      # YOURLS_DB_PASS= Located in .env
+      - YOURLS_DB_NAME=yourls
+      - YOURLS_USER=admin
+      # YOURLS_PASS= Located in .env
+      - YOURLS_SITE=https://
+    depends_on:
+      - mysql
+    volumes:
+      - ./html:/var/www/html
+    restart: unless-stopped
+
+  mysql:
+    env_file: .env
+    image: mysql
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=yourls
+      # MYSQL_ROOT_PASSWORD= Located in .env
+    restart: unless-stopped

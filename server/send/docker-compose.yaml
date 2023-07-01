@@ -1,0 +1,56 @@
+version: "3"
+
+## Create a .env file with the following variables:
+#DOCKER_SEND_IMAGE (which send image to pull from dockerhub)
+#HOST (hostname for your send instance)
+#SEND_BASE_URL (same as HOST, but with https:// prefix)
+## After running first, give 777 perms to upload folder
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:  
+  send:
+    container_name: send
+    image: '${DOCKER_SEND_IMAGE}'
+    restart: always
+    ports:
+      - '1234:1234'
+    volumes:
+      - ./uploads:/uploads
+    environment:
+      - VIRTUAL_HOST=${HOST}
+      - VIRTUAL_PORT=1234
+      - DHPARAM_GENERATION=false
+      - NODE_ENV=production
+      - BASE_URL=${SEND_BASE_URL}
+      - PORT=1234
+      - REDIS_HOST=redis
+
+      # For local uploads storage
+      - FILE_DIR=/uploads
+
+      # To customize upload limits
+      # - EXPIRE_TIMES_SECONDS=3600,86400,604800,2592000,31536000
+      # - DEFAULT_EXPIRE_SECONDS=3600
+      # - MAX_EXPIRE_SECONDS=31536000
+      # - DOWNLOAD_COUNTS=1,2,5,10,15,25,50,100,1000
+      # - MAX_DOWNLOADS=1000
+      # - MAX_FILE_SIZE=2684354560
+      - DEFAULT_EXPIRE_SECONDS=60
+      - DOWNLOAD_COUNTS=1,2,5,10,15,25,50,100,1000,10000,100000,250000
+      - EXPIRE_TIMES_SECONDS=60,300,600,900,1200,1500,1800,3600,7200,86400,259200,604800
+  
+  redis:
+    image: 'redis:alpine'
+    restart: always
+    volumes:
+      - send-redis:/data
+
+volumes:
+  send-redis:
+  proxy-certs:
+  proxy-vhost:
+  proxy-html:
