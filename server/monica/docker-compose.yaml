@@ -1,0 +1,45 @@
+version: "3.9"
+
+## Create an .env file with:
+#APP_KEY (echo -n 'base64:'; openssl rand -base64 32)
+#APP_URL (https scheme)
+#DB_PASSWORD (database password)
+#MYSQL_PASSWORD (same value as DB_PASSWORD)
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:
+  app:
+    image: monica
+    depends_on:
+      - db
+    env_file: .env
+    ports:
+      - 8083:80
+    environment:
+      - APP_ENV=production
+      - DB_HOST=monicadb
+      - DB_DATABASE=monica
+      - DB_USERNAME=usermonica
+    volumes:
+      - ./data:/var/www/html/storage
+    restart: unless-stopped
+
+  db:
+    image: mysql
+    container_name: monicadb
+    env_file: .env
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=monica
+      - MYSQL_USER=usermonica
+    volumes:
+      - ./mysql:/var/lib/mysql
+    restart: always
+
+volumes:
+  data:
+  mysql:
