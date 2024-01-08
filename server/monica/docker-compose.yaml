@@ -30,7 +30,7 @@ services:
 
   db:
     image: mysql
-    container_name: monicadb
+    container_name: beercan1989/arm-mysql:5.7
     env_file: .env
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=true
