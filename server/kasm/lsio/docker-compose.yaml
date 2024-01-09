@@ -1,0 +1,23 @@
+version: "2.1"
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:
+  kasm:
+    image: lscr.io/linuxserver/kasm:latest
+    container_name: kasm
+    privileged: true
+    environment:
+      - KASM_PORT=4443
+    volumes:
+      - ./opt:/opt
+      - ./profiles:/profiles
+      - ./dev/input:/dev/input
+      - ./run/udev/data:/run/udev/data
+    ports:
+      - 3111:3000
+      - 4443:4443
+    restart: unless-stopped
