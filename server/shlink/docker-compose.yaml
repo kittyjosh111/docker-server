@@ -1,0 +1,44 @@
+networks:
+  default:
+    name: npm_default
+    external: true
+
+# You need two domains, one to point to shlink-server (the server itself), and one to shlink-gui (the web gui)
+
+services:
+  shlink:
+    image: shlinkio/shlink:stable
+    restart: always
+    container_name: shlink-server
+    environment:
+      - GEOLITE_LICENSE_KEY=''
+      - IS_HTTPS_ENABLED=false
+      - DB_DRIVER=maria
+      - DB_USER=shlink
+      - DB_NAME=shlink
+      - DB_PASSWORD=mydbpassword
+      - DB_HOST=database
+    depends_on:
+      - database
+    ports:
+      - 8093:8080
+
+  database:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=mydbpassword
+      - MARIADB_DATABASE=shlink
+      - MARIADB_USER=shlink
+      - MARIADB_PASSWORD=mydbpassword
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  shlink-web-client:
+    image: shlinkio/shlink-web-client
+    restart: always
+    container_name: shlink-gui
+    depends_on:
+      - shlink
+    ports:
+      - 8334:8080

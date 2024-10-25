@@ -1,0 +1,36 @@
+#Define MYSQL_ROOT_PASSWORD and MYSQL_PASSWORD in .env. Use MYSQL_PASSWORD when setting up the mysql database on the GUI
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:
+  nextcloud:
+    image: linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    ports:
+      - 749:443
+    restart: unless-stopped
+    depends_on:
+      - nextcloud-db
+
+  nextcloud-db:
+    image: linuxserver/mariadb:latest
+    container_name: nextcloud-db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./config_db:/config
+    restart: unless-stopped

@@ -1,0 +1,20 @@
+---
+#Create a .env file with JWT_KEY and API_KEY_SECRET. Refer to the project docs for other options
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:
+  mirotalk-p2p:
+    image: mirotalk/p2p:latest
+    container_name: mirotalk
+    environment:
+      - JWT_KEY='${JWT_KEY}'
+      - API_KEY_SECRET='${API_KEY_SECRET}'
+    volumes:
+      - .env:/src/.env:r
+    ports:
+      - 3079:3000
+    restart: unless-stopped

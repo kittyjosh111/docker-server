@@ -1,0 +1,19 @@
+version: "3"
+
+networks:
+  default:
+    name: npm_default
+    external: true
+
+services:
+  wbo:
+    container_name: wbo
+    image: lovasoa/wbo
+    restart: always
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 98:80
+    volumes:
+      - ./server-data:/opt/app/server-data
