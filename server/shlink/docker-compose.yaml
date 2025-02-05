@@ -1,22 +1,23 @@
+---
+# create a .env file with DB_PASSWORD and DB_ROOT_PASSWORD. when assigning domains to docker container names, pay attention to the below names
+
 networks:
   default:
     name: npm_default
     external: true
 
-# You need two domains, one to point to shlink-server (the server itself), and one to shlink-gui (the web gui)
-
 services:
   shlink:
     image: shlinkio/shlink:stable
     restart: always
-    container_name: shlink-server
+    container_name: shlink-server-backend
     environment:
       - GEOLITE_LICENSE_KEY=''
       - IS_HTTPS_ENABLED=false
       - DB_DRIVER=maria
       - DB_USER=shlink
       - DB_NAME=shlink
-      - DB_PASSWORD=mydbpassword
+      - DB_PASSWORD='${DB_PASSWORD}'
       - DB_HOST=database
     depends_on:
       - database
@@ -27,17 +28,17 @@ services:
     image: mariadb:10.11
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=mydbpassword
+      - MARIADB_ROOT_PASSWORD='${DB_ROOT_PASSWORD}'
       - MARIADB_DATABASE=shlink
       - MARIADB_USER=shlink
-      - MARIADB_PASSWORD=mydbpassword
+      - MARIADB_PASSWORD='${DB_PASSWORD}'
     volumes:
       - ./mysql:/var/lib/mysql
 
   shlink-web-client:
     image: shlinkio/shlink-web-client
     restart: always
-    container_name: shlink-gui
+    container_name: shlink-gui-frontend
     depends_on:
       - shlink
     ports:
