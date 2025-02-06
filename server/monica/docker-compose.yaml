@@ -29,8 +29,8 @@ services:
     restart: unless-stopped
 
   db:
-    image: mysql
-    container_name: beercan1989/arm-mysql:5.7
+    image: beercan1989/arm-mysql:5.7
+    container_name: monicadb
     env_file: .env
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=true
